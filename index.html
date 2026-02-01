@@ -1,101 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Professional Wrestling News Hub</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: linear-gradient(135deg, #0b0b16, #1a0f2e);
-      color: #f5f5ff;
-    }
-    header {
-      padding: 3rem 1rem;
-      text-align: center;
-      background: radial-gradient(circle at top, #c40000, #4a0000, #120000);
-    }
-    header h1 {
-      font-size: 3rem;
-      margin-bottom: 0.5rem;
-    }
-    header p {
-      max-width: 700px;
-      margin: 0 auto;
-      opacity: 0.9;
-    }
-    section {
-      padding: 3rem 1rem;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1.5rem;
-    }
-    .card {
-      background: rgba(255, 255, 255, 0.06);
-      border-radius: 16px;
-      padding: 1.5rem;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
-    }
-    .card h3 {
-      margin-top: 0;
-      color: #ff9d9d;
-    }
-    footer {
-      text-align: center;
-      padding: 2rem 1rem;
-      font-size: 0.85rem;
-      opacity: 0.7;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wrestling News Hub</title>
+    <style>
+        :root {
+            --primary: #e63946;
+            --dark: #1d3557;
+            --light: #f1faee;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 2px solid var(--primary);
+        }
+        h1 { margin: 0; font-size: 2.5rem; text-transform: uppercase; letter-spacing: 2px; }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .card {
+            background: #1e1e1e;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            border: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+        }
+        .card:hover { transform: translateY(-5px); border-color: var(--primary); }
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background-color: #333;
+        }
+        .card-content { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; }
+        .source-badge {
+            background: var(--primary);
+            color: white;
+            padding: 4px 8px;
+            font-size: 0.7rem;
+            border-radius: 4px;
+            width: fit-content;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        h3 { margin: 10px 0; font-size: 1.2rem; line-height: 1.4; }
+        p { color: #ccc; font-size: 0.9rem; line-height: 1.5; }
+        .btn {
+            display: inline-block;
+            margin-top: auto;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            text-align: center;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        footer { text-align: center; margin-top: 50px; color: #666; font-size: 0.8rem; }
+    </style>
 </head>
 <body>
-  <header>
-    <h1>Professional Wrestling News Hub</h1>
-    <p>Breaking news, match results, rumors, and official announcements — automatically refreshed every 3 days.</p>
-  </header>
 
-  <section>
-    <h2>Latest Updates</h2>
-    <div class="card-grid" id="updates">
-      <p>Loading latest wrestling news…</p>
-    </div>
-  </section>
+<header>
+    <h1>Wrestling News Hub</h1>
+    <p>Daily Rumors, Results & Breaking News</p>
+</header>
 
-  <footer>
-    © 2026 Professional Wrestling News Hub · Unofficial fan project
-  </footer>
+<div class="container" id="news-container">
+    <p style="text-align: center; grid-column: 1/-1;">Loading latest headlines...</p>
+</div>
 
-  <script>
-    fetch("updates.json")
-      .then(res => res.json())
-      .then(data => {
-        const container = document.getElementById("updates");
-        container.innerHTML = "";
-        data.forEach(item => {
-          container.innerHTML += `
-            <div class="card">
-              <h3>${item.title}</h3>
-              <p>${item.summary}</p>
-              <small>${item.source}</small><br/>
-              <a href="${item.link}" target="_blank">Read more</a>
-            </div>
-          `;
-        });
-      })
-      .catch(() => {
-        document.getElementById("updates").innerHTML =
-          "<p>News will appear once the first update runs.</p>";
-      });
-  </script>
+<footer>
+    <p>Automated by Gemini Bot & GitHub Actions • Updated Daily</p>
+</footer>
+
+<script>
+    async function loadNews() {
+        try {
+            // We are fetching from the root because we moved the file
+            const response = await fetch('updates.json');
+            const data = await response.json();
+            const container = document.getElementById('news-container');
+            container.innerHTML = '';
+
+            data.forEach(article => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <img src="${article.image}" onerror="this.src='https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=500&q=80'" alt="Wrestling News">
+                    <div class="card-content">
+                        <span class="source-badge">${article.source}</span>
+                        <h3>${article.title}</h3>
+                        <p>${article.summary}</p>
+                        <a href="${article.link}" target="_blank" class="btn">Read Full Story</a>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        } catch (error) {
+            console.error('Error loading news:', error);
+            document.getElementById('news-container').innerHTML = '<p>Check back in a few minutes! The bot is currently pinning the latest news.</p>';
+        }
+    }
+
+    loadNews();
+</script>
+
 </body>
 </html>
