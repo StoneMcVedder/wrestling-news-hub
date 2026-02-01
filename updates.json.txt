@@ -1,9 +1,0 @@
-[
-  {
-    "source": "System",
-    "title": "Auto-updating wrestling news is being set up",
-    "link": "#",
-    "date": "2026-01-01",
-    "summary": "This site will automatically pull the latest professional wrestling news every 3 days."
-  }
-]
