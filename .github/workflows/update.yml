@@ -1,9 +1,8 @@
 name: Update Wrestling News
 on:
   schedule:
-    - cron: "0 0 */3 * *" # Runs every 3 days
-  workflow_dispatch: # Allows you to run it manually
-
+    - cron: "0 0 */3 * *"
+  workflow_dispatch:
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -17,8 +16,8 @@ jobs:
       - run: |
           git config user.name "news-bot"
           git config user.email "bot@github.com"
-          git add .
+          git add public/updates.json
           git commit -m "Auto-update wrestling news" || exit 0
           git push
-env:
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
