@@ -12,7 +12,6 @@ async function updateNews() {
 
   for (const feed of feeds) {
     try {
-      console.log(`Fetching ${feed.name}...`);
       const data = await parser.parseURL(feed.url);
       data.items.slice(0, 5).forEach(item => {
         let imageUrl = "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=400&q=80";
@@ -28,24 +27,23 @@ async function updateNews() {
           summary: item.contentSnippet?.replace(/<[^>]*>/g, '').slice(0, 100) + "..."
         });
       });
-    } catch (e) { console.warn(`Skipping ${feed.name}`); }
+    } catch (e) { console.log(`Skipped ${feed.name}`); }
   }
 
-  // FALLBACK: If everything fails, show this so the site doesn't break
+  // If both sites fail, we provide a placeholder so the site isn't blank
   if (articles.length === 0) {
     articles.push({
       source: "System",
-      title: "New wrestling updates arriving soon!",
+      title: "Wrestling News Refreshing...",
       link: "#",
       date: new Date().toISOString(),
       image: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=400&q=80",
-      summary: "We are currently refreshing the news feeds. Check back in a few minutes!"
+      summary: "Feeds are currently updating. New matches and rumors coming soon!"
     });
   }
 
   if (!fs.existsSync('./public')) fs.mkdirSync('./public');
   fs.writeFileSync("./public/updates.json", JSON.stringify(articles, null, 2));
-  console.log("🚀 Success!");
+  console.log("🚀 Update Successful!");
 }
 updateNews();
-
