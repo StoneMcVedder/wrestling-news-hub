@@ -1,0 +1,22 @@
+name: Update Wrestling News
+on:
+  schedule:
+    - cron: "0 0 */3 * *" # Runs every 3 days
+  workflow_dispatch: # Allows you to run it manually
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: node scripts/updateNews.js
+      - run: |
+          git config user.name "news-bot"
+          git config user.email "bot@github.com"
+          git add .
+          git commit -m "Auto-update wrestling news" || exit 0
+          git push
