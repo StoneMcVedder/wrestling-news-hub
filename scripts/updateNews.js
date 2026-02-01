@@ -48,3 +48,4 @@ async function updateNews() {
   console.log("🚀 Success!");
 }
 updateNews();
+
