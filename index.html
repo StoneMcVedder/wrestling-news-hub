@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Professional Wrestling News Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #0b0b16, #1a0f2e);
+      color: #f5f5ff;
+    }
+    header {
+      padding: 3rem 1rem;
+      text-align: center;
+      background: radial-gradient(circle at top, #c40000, #4a0000, #120000);
+    }
+    header h1 {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+    }
+    header p {
+      max-width: 700px;
+      margin: 0 auto;
+      opacity: 0.9;
+    }
+    section {
+      padding: 3rem 1rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+    }
+    .card h3 {
+      margin-top: 0;
+      color: #ff9d9d;
+    }
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 0.85rem;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Professional Wrestling News Hub</h1>
+    <p>Breaking news, match results, rumors, and official announcements — automatically refreshed every 3 days.</p>
+  </header>
+
+  <section>
+    <h2>Latest Updates</h2>
+    <div class="card-grid" id="updates">
+      <p>Loading latest wrestling news…</p>
+    </div>
+  </section>
+
+  <footer>
+    © 2026 Professional Wrestling News Hub · Unofficial fan project
+  </footer>
+
+  <script>
+    fetch("updates.json")
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById("updates");
+        container.innerHTML = "";
+        data.forEach(item => {
+          container.innerHTML += `
+            <div class="card">
+              <h3>${item.title}</h3>
+              <p>${item.summary}</p>
+              <small>${item.source}</small><br/>
+              <a href="${item.link}" target="_blank">Read more</a>
+            </div>
+          `;
+        });
+      })
+      .catch(() => {
+        document.getElementById("updates").innerHTML =
+          "<p>News will appear once the first update runs.</p>";
+      });
+  </script>
+</body>
+</html>
