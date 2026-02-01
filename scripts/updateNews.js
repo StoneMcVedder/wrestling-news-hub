@@ -1,49 +1,42 @@
-import Parser from "rss-parser";
-import fs from "fs";
+name: Update Wrestling News
 
-const parser = new Parser();
-const feeds = [
-  { name: "WWE", url: "https://www.wwe.com/feeds/rss/news" },
-  { name: "WrestlingInc", url: "https://www.wrestlinginc.com/rss/" }
-];
+on:
+  schedule:
+    - cron: "0 0 */3 * *" # Runs every 3 days
+  workflow_dispatch: # Allows you to run it manually whenever you want
 
-async function updateNews() {
-  let articles = [];
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Pull your code from GitHub into the bot's temporary computer
+      - uses: actions/checkout@v4
 
-  for (const feed of feeds) {
-    try {
-      const data = await parser.parseURL(feed.url);
-      data.items.slice(0, 5).forEach(item => {
-        let imageUrl = "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=400&q=80";
-        const imgMatch = item.contentSnippet?.match(/src="([^"]+)"/) || item.content?.match(/src="([^"]+)"/);
-        if (imgMatch) imageUrl = imgMatch[1];
+      # 2. Set up Node.js (the engine)
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-        articles.push({
-          source: feed.name,
-          title: item.title,
-          link: item.link,
-          date: item.pubDate || new Date().toISOString(),
-          image: imageUrl,
-          summary: item.contentSnippet?.replace(/<[^>]*>/g, '').slice(0, 100) + "..."
-        });
-      });
-    } catch (e) { console.log(`Skipped ${feed.name}`); }
-  }
+      # 3. INSTALL THE TOOLS (This was the missing piece!)
+      - name: Install dependencies
+        run: npm install
 
-  // If both sites fail, we provide a placeholder so the site isn't blank
-  if (articles.length === 0) {
-    articles.push({
-      source: "System",
-      title: "Wrestling News Refreshing...",
-      link: "#",
-      date: new Date().toISOString(),
-      image: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=400&q=80",
-      summary: "Feeds are currently updating. New matches and rumors coming soon!"
-    });
-  }
+      # 4. RUN THE SCRIPT
+      - name: Run update script
+        run: node scripts/updateNews.js
 
-  if (!fs.existsSync('./public')) fs.mkdirSync('./public');
+      # 5. SAVE THE CHANGES BACK TO GITHUB
+      - name: Commit and push changes
+        run: |
+          git config user.name "news-bot"
+          git config user.email "bot@github.com"
+          git add public/updates.json
+          git commit -m "Auto-update wrestling news" || exit 0
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   fs.writeFileSync("./public/updates.json", JSON.stringify(articles, null, 2));
   console.log("🚀 Update Successful!");
 }
 updateNews();
+
