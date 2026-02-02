@@ -4,7 +4,9 @@ import fs from "fs";
 const parser = new Parser();
 const feeds = [
   { name: "WWE", url: "https://www.wwe.com/feeds/rss/news" },
-  { name: "WrestlingInc", url: "https://www.wrestlinginc.com/rss/" }
+  { name: "WrestlingInc", url: "https://www.wrestlinginc.com/rss/" },
+  { name: "AEW", url: "https://www.allelitewrestling.com/blog-feed.xml" },
+  { name: "NJPW", url: "https://www.njpw1912.com/feed/" }
 ];
 
 async function updateNews() {
@@ -42,3 +44,4 @@ async function updateNews() {
   console.log("🚀 Update Successful with Images!");
 }
 updateNews();
+
