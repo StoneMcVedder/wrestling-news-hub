@@ -9,6 +9,7 @@
             --primary: #e63946;
             --dark: #1d3557;
             --light: #f1faee;
+            --card-bg: #1e1e1e;
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -19,14 +20,38 @@
         }
         header {
             text-align: center;
-            padding: 40px 0;
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=1200&q=80');
+            padding: 40px 20px;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=1200&q=80');
             background-size: cover;
+            background-position: center;
             border-radius: 15px;
             margin-bottom: 30px;
             border: 2px solid var(--primary);
         }
         h1 { margin: 0; font-size: 2.5rem; text-transform: uppercase; letter-spacing: 2px; }
+        
+        /* SEARCH BAR STYLES */
+        .search-container {
+            max-width: 600px;
+            margin: -20px auto 30px;
+            position: relative;
+            z-index: 10;
+        }
+        #search-input {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 1rem;
+            border-radius: 30px;
+            border: 2px solid var(--primary);
+            background: #1e1e1e;
+            color: white;
+            outline: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        #search-input:focus {
+            box-shadow: 0 0 15px var(--primary);
+        }
+
         .container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -35,14 +60,17 @@
             margin: 0 auto;
         }
         .card {
-            background: #1e1e1e;
+            background: var(--card-bg);
             border-radius: 12px;
             overflow: hidden;
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
             border: 1px solid #333;
             display: flex;
             flex-direction: column;
         }
+        /* Hidden class for search results */
+        .hidden { display: none !important; }
+
         .card:hover { transform: translateY(-5px); border-color: var(--primary); }
         .card img {
             width: 100%;
@@ -74,18 +102,22 @@
             border-radius: 6px;
             font-weight: bold;
         }
-        footer { text-align: center; margin-top: 50px; color: #666; font-size: 0.8rem; }
+        footer { text-align: center; margin-top: 50px; padding: 20px; color: #666; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
 <header>
     <h1>Wrestling News Hub</h1>
-    <p>Daily Rumors, Results & Breaking News</p>
+    <p>WWE • AEW • NJPW • RUMORS</p>
 </header>
 
+<div class="search-container">
+    <input type="text" id="search-input" placeholder="Search for wrestlers, events, or promotions...">
+</div>
+
 <div class="container" id="news-container">
-    <p style="text-align: center; grid-column: 1/-1;">Loading latest headlines...</p>
+    <p style="text-align: center; grid-column: 1/-1;">Warming up the ring...</p>
 </div>
 
 <footer>
@@ -93,33 +125,54 @@
 </footer>
 
 <script>
+    let allArticles = [];
+
     async function loadNews() {
         try {
-            // We are fetching from the root because we moved the file
             const response = await fetch('updates.json');
-            const data = await response.json();
-            const container = document.getElementById('news-container');
-            container.innerHTML = '';
-
-            data.forEach(article => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `
-                    <img src="${article.image}" onerror="this.src='https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=500&q=80'" alt="Wrestling News">
-                    <div class="card-content">
-                        <span class="source-badge">${article.source}</span>
-                        <h3>${article.title}</h3>
-                        <p>${article.summary}</p>
-                        <a href="${article.link}" target="_blank" class="btn">Read Full Story</a>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
+            allArticles = await response.json();
+            displayArticles(allArticles);
         } catch (error) {
             console.error('Error loading news:', error);
-            document.getElementById('news-container').innerHTML = '<p>Check back in a few minutes! The bot is currently pinning the latest news.</p>';
+            document.getElementById('news-container').innerHTML = '<p>The ring is empty! Try refreshing in a moment.</p>';
         }
     }
+
+    function displayArticles(articles) {
+        const container = document.getElementById('news-container');
+        container.innerHTML = '';
+
+        if (articles.length === 0) {
+            container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">No news found matching that search.</p>';
+            return;
+        }
+
+        articles.forEach(article => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <img src="${article.image}" onerror="this.src='https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=500&q=80'" alt="News">
+                <div class="card-content">
+                    <span class="source-badge">${article.source}</span>
+                    <h3>${article.title}</h3>
+                    <p>${article.summary}</p>
+                    <a href="${article.link}" target="_blank" class="btn">Read Full Story</a>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    // SEARCH LOGIC
+    document.getElementById('search-input').addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase();
+        const filtered = allArticles.filter(article => 
+            article.title.toLowerCase().includes(term) || 
+            article.summary.toLowerCase().includes(term) ||
+            article.source.toLowerCase().includes(term)
+        );
+        displayArticles(filtered);
+    });
 
     loadNews();
 </script>
