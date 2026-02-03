@@ -51,6 +51,8 @@
             const response = await fetch('updates.json');
             allArticles = await response.json();
             displayArticles(allArticles);
+            const lastUpdated = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+document.querySelector('header p').innerHTML += ` • Last Checked: ${lastUpdated}`;
         } catch (error) {
             console.error('Error loading news:', error);
             document.getElementById('news-container').innerHTML = '<p>The ring is empty! Try refreshing in a moment.</p>';
@@ -98,5 +100,6 @@
 
 </body>
 </html>
+
 
 
